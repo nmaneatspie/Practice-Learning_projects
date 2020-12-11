@@ -25,15 +25,19 @@ width = 600
 height = 600
 status_height = 100
 
-fps = 30
+fps = 10
 
-board = [[]*3, []*3, []*3] #setting up 3x3 board
+board = [[0]*3, [0]*3, [0]*3] #setting up 3x3 board
 
 #other variables
 char = 'x' #store 'x' or 'o' as char value.
 
 state = "Setup" #current game state. States are: setup, play1, play2, draw, win
 winner = None
+run = True
+
+pg.font.init()
+
 #Functions
 #File writing function
 def write_file(filename, err_num):
@@ -107,7 +111,7 @@ def draw_status():
 
     try:
         err_line = getframeinfo(currentframe()).lineno
-        font = pg.font.Font(None,30)
+        font = pg.font.SysFont('Arial',30)
         text = font.render(msg, text_width, text_colour)
         scr.fill(status_colour, (0, width, height+status_height, status_height))
         text_rect = text.get_rect(center =(width/2, (height+status_height) - (status_height/2)))
@@ -120,14 +124,22 @@ def check_win():
     global board, state
 
     #check for winning diagonals then columsn then rows
-    if (board[0][0] == board[1][1] == board[2][2]) and board[1][1] != None:
+    if (board[0][0] == board[1][1] == board[2][2]) and board[1][1] != 0:
         state = "win"
         winner = board[1][1]
         #Do stuff to show which one's are winning combination
-    elif (board[0][2] == board[1][1] == board[2][0]) and board[1][1] != None:
+    elif (board[0][2] == board[1][1] == board[2][0]) and board[1][1] != 0:
         state = "win"
         winner = board[1][1]
         #Do stuff to show which one's are winning combination
+
+def player_move(): #To Do
+    global board, state
+
+    stub = True
+
+    if stub != True:
+        state = 'play2'
 
 #Initialization
 try:
@@ -188,3 +200,11 @@ except:
     error_log(2, err_line)
 
 init_window()
+
+while run:
+    pg.event.pump()
+    draw_status()
+    check_win()
+
+    if state == 'play1':
+        player_mov()
