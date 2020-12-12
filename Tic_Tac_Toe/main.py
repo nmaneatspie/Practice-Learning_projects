@@ -3,10 +3,6 @@
 
 #Simple Game: Tic Tac Toe
 #Shouldn't need much explanation. Two modes: singleplayer (1 Human and simple AI: for time being does random move) and two-player (2 Humans) [To be done later]
-# Board positions shall be as follows:
-# 1 | 2 | 3
-# 4 | 5 | 6
-# 7 | 8 | 9
 
 #libraries
 import sys
@@ -37,11 +33,8 @@ fps = 1
 board = [['0']*3, ['0']*3, ['0']*3] #setting up 3x3 board
 
 #other variables
-#char = 'x' #store 'x' or 'o' as char value.
-
-state = "Setup" #current game state. States are: setup, play1, play2, draw, win
+state = "Setup" #current game state. States are: setup, play1, play2, draw, win, again?
 winner = None
-run = True
 
 #Functions
 #File writing function
