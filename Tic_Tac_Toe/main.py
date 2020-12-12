@@ -21,9 +21,16 @@ err_line = getframeinfo(currentframe()).lineno
 debug = True  #For visual studio testing
 
 #Game window variables
-width = 600
-height = 600
+width = 600 #if changed, need to change obj_width
+height = 600 #if changed, need to change obj_height
 status_height = 100
+
+#Image variables
+sides = 20 #remove some amount from edge
+#obj_height = height/3 - sides #crashes for some reason, need to check again!!!!!!!!!!!!!!
+#obj_width  = width/3 - sides
+obj_height = 200 - sides
+obj_width = 200 - sides
 
 fps = 10
 
@@ -122,7 +129,7 @@ def draw_status():
         error_log(2, err_line)
 
 def check_win():
-    global board, state
+    global board, state, winner
 
     #check for winning diagonals then columsn then rows
     if (board[0][0] == board[1][1] == board[2][2]) and board[1][1] !='0':
@@ -140,7 +147,14 @@ def check_win():
             elif (board[0][i] == board[1][i] == board[2][i]) and board[0][i] != '0': #column same
                 winner = board[0][i]
                 state = "win"
-        #Do stuff to show which one's are winning combination
+     #stub
+    if state == "win":
+        if winner != None:
+            print(winner)
+            state = "again?" #To do: ask if player wants to play again
+        else: 
+            print('error with winner')
+            state = "again?"
 
 def player_move(player): #To Do for 'o' player, need to change the image input based on player
     global board, state, scr, width, height, x_img, o_img, sides
@@ -259,14 +273,6 @@ if debug:
     x_imagefile = join(current_dir, x_imagefile)
     o_imagefile = join(current_dir, o_imagefile)
 
-sides = 20 #remove some amount from edge
-
-#obj_height = height/3 - sides #crashes for some reason, need to check again!!!!!!!!!!!!!!
-#obj_width  = width/3 - sides
-
-obj_height = 200 - sides
-obj_width = 200 - sides
-
 try:
     err_line = getframeinfo(currentframe()).lineno
     cover_img = pg.image.load(cover_imagefile).convert()
@@ -303,9 +309,10 @@ init_window()
 while run:
     pg.event.pump()
     draw_status()
-    check_win()
+    if state != "again?":
+        check_win()
 
-    if state == 'play1':
-        player_move('x')
-    elif state == 'play2':
-        player_move('o')
+        if state == 'play1':
+            player_move('x')
+        elif state == 'play2':
+            player_move('o')
