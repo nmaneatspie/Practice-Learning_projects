@@ -36,8 +36,6 @@ state = "Setup" #current game state. States are: setup, play1, play2, draw, win
 winner = None
 run = True
 
-pg.font.init()
-
 #Functions
 #File writing function
 def write_file(filename, err_num):
@@ -147,77 +145,100 @@ def check_win():
 def player_move(player): #To Do for 'o' player, need to change the image input based on player
     global board, state, scr, width, height, x_img, o_img, sides
 
-    if pg.mouse.get_pressed()[0] and player == 'x':
+    if pg.mouse.get_pressed()[0]: # and player == 'x':
         x, y = pg.mouse.get_pos()
         
+        if player == 'x':
+            img = x_img
+        else: img = o_img
+
         #testing change the board assignment later
         if x < width/3 and y < height/3 and board[0][0] == '0':
             board[0][0] = player
-            print('Board[0][0] Clicked')
-            scr.blit(x_img, (sides/2,sides/2))
+            scr.blit(img, (sides/2,sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
         elif (x > width/3 and x < 2*width/3) and y < height/3 and board[0][1] == '0':
             board[0][1] = player
-            print('Board[0][1] Clicked')
-            scr.blit(x_img, (width/3+sides/2,sides/2))
+            scr.blit(img, (width/3+sides/2,sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
         elif x > 2*width/3 and y < height/3 and board[0][2] == '0':
             board[0][2] = player
-            print('Board[0][2] Clicked')
-            scr.blit(x_img, (2*width/3 + sides/2, sides/2))
+            scr.blit(img, (2*width/3 + sides/2, sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
         elif x < width/3 and (y > height/3 and y < 2*height/3) and board[1][0] == '0':
             board[1][0] = player
-            print('Board[1][0] Clicked')
-            scr.blit(x_img, (sides/2, height/3 + sides/2))
+            scr.blit(img, (sides/2, height/3 + sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
         elif(x > width/3 and x < 2*width/3) and (y > height/3 and y < 2*height/3) and board[1][1] == '0':
             board[1][1] = player
-            print('Board[1][1] Clicked')
-            scr.blit(x_img, (width/3 + sides/2, height/3 + sides/2))
+            scr.blit(img, (width/3 + sides/2, height/3 + sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
         elif x > 2*width/3 and (y > height/3 and y < 2*height/3) and board[1][2] == '0':
             board[1][2] = player
-            print('Board[1][2] Clicked')
-            scr.blit(x_img, (2*width/3 + sides/2, height/3 + sides/2))
+            scr.blit(img, (2*width/3 + sides/2, height/3 + sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
         elif x < width/3 and (y > 2*height/3 and y < height) and board[2][0] == '0':
             board[2][0] = player
-            print('Board[2][0] Clicked')
-            scr.blit(x_img, (sides/2, 2*height/3 + sides/2))
+            scr.blit(img, (sides/2, 2*height/3 + sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
         elif(x > width/3 and x < 2*width/3) and (y > 2*height/3 and y < height) and board[2][1] == '0':
             board[2][1] = player
-            print('Board[2][1] Clicked')
-            scr.blit(x_img, (width/3 + sides/2, 2*height/3 + sides/2))
+            scr.blit(img, (width/3 + sides/2, 2*height/3 + sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
         elif x > 2*width/3 and (y > 2*height/3 and y < height) and board[2][2] == '0':
             board[2][2] = player
-            print('Board[2][2] Clicked')
-            scr.blit(x_img, (2*width/3 + sides/2, 2*height/3 + sides/2))
+            scr.blit(img, (2*width/3 + sides/2, 2*height/3 + sides/2))
             pg.display.update()
-            state = 'play2'
+
+            if state == 'play1':
+                state = 'play2'
+            else: state = 'play1'
 
 #Initialization
 try:
     err_line = getframeinfo(currentframe()).lineno
     pg.init()
+    pg.font.init()
     CLK = pg.time.Clock()
 
     scr = pg.display.set_mode((width, height + status_height), 0 , fps)
@@ -287,5 +308,4 @@ while run:
     if state == 'play1':
         player_move('x')
     elif state == 'play2':
-        #stub
-        state = 'play1'
+        player_move('o')
