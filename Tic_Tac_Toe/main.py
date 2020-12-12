@@ -32,7 +32,7 @@ sides = 20 #remove some amount from edge
 obj_height = 200 - sides
 obj_width = 200 - sides
 
-fps = 10
+fps = 1
 
 board = [['0']*3, ['0']*3, ['0']*3] #setting up 3x3 board
 
@@ -121,7 +121,6 @@ def draw_status():
         err_line = getframeinfo(currentframe()).lineno
         font = pg.font.SysFont('Arial',30)
         text = font.render(msg, text_width, text_colour)
-        #scr.fill(status_colour, (0, width, height+status_height, status_height))
         text_rect = text.get_rect(center =(width/2, (height+status_height) - (status_height/2)))
         scr.blit(text, text_rect)
         pg.display.update()
@@ -139,14 +138,28 @@ def check_win():
     elif (board[0][2] == board[1][1] == board[2][0]) and board[1][1] != '0':
         winner = board[1][1]
         state = "win"
-    elif state != "win":
-        for i in range(0,2):
+    else:
+        draw = True
+
+        for i in range(0,3):
+
             if (board[i][0] == board[i][1] == board[i][2]) and board[i][0] != '0': #row same
                 winner = board[i][0]
                 state = "win"
             elif (board[0][i] == board[1][i] == board[2][i]) and board[0][i] != '0': #column same
                 winner = board[0][i]
                 state = "win"
+                
+            if state != "win" and draw == True:
+                for j in range(0,3):
+                    if board[i][j] == '0':
+                        draw = False
+                        break
+
+        if draw == True:
+            state = "draw"
+            print(state)
+
      #stub
     if state == "win":
         if winner != None:
@@ -155,6 +168,9 @@ def check_win():
         else: 
             print('error with winner')
             state = "again?"
+    elif state == "draw":
+        print('Draw')
+        state = "again?"
 
 def player_move(player): #To Do for 'o' player, need to change the image input based on player
     global board, state, scr, width, height, x_img, o_img, sides
@@ -164,89 +180,64 @@ def player_move(player): #To Do for 'o' player, need to change the image input b
         
         if player == 'x':
             img = x_img
-        else: img = o_img
+        else: 
+            img = o_img
+
+        moved = False
 
         #testing change the board assignment later
         if x < width/3 and y < height/3 and board[0][0] == '0':
             board[0][0] = player
-            scr.blit(img, (sides/2,sides/2))
-            pg.display.update()
-
-            if state == 'play1':
-                state = 'play2'
-            else: state = 'play1'
+            scr.blit(img, (sides/2, sides/2))
+            moved = True
 
         elif (x > width/3 and x < 2*width/3) and y < height/3 and board[0][1] == '0':
             board[0][1] = player
-            scr.blit(img, (width/3+sides/2,sides/2))
-            pg.display.update()
-
-            if state == 'play1':
-                state = 'play2'
-            else: state = 'play1'
+            scr.blit(img, (width/3+sides/2, sides/2))
+            moved = True
 
         elif x > 2*width/3 and y < height/3 and board[0][2] == '0':
             board[0][2] = player
             scr.blit(img, (2*width/3 + sides/2, sides/2))
-            pg.display.update()
-
-            if state == 'play1':
-                state = 'play2'
-            else: state = 'play1'
+            moved = True
 
         elif x < width/3 and (y > height/3 and y < 2*height/3) and board[1][0] == '0':
             board[1][0] = player
             scr.blit(img, (sides/2, height/3 + sides/2))
-            pg.display.update()
-
-            if state == 'play1':
-                state = 'play2'
-            else: state = 'play1'
+            moved = True
 
         elif(x > width/3 and x < 2*width/3) and (y > height/3 and y < 2*height/3) and board[1][1] == '0':
             board[1][1] = player
             scr.blit(img, (width/3 + sides/2, height/3 + sides/2))
-            pg.display.update()
-
-            if state == 'play1':
-                state = 'play2'
-            else: state = 'play1'
+            moved = True
 
         elif x > 2*width/3 and (y > height/3 and y < 2*height/3) and board[1][2] == '0':
             board[1][2] = player
             scr.blit(img, (2*width/3 + sides/2, height/3 + sides/2))
-            pg.display.update()
-
-            if state == 'play1':
-                state = 'play2'
-            else: state = 'play1'
+            moved = True
 
         elif x < width/3 and (y > 2*height/3 and y < height) and board[2][0] == '0':
             board[2][0] = player
             scr.blit(img, (sides/2, 2*height/3 + sides/2))
-            pg.display.update()
-
-            if state == 'play1':
-                state = 'play2'
-            else: state = 'play1'
+            moved = True
 
         elif(x > width/3 and x < 2*width/3) and (y > 2*height/3 and y < height) and board[2][1] == '0':
             board[2][1] = player
             scr.blit(img, (width/3 + sides/2, 2*height/3 + sides/2))
-            pg.display.update()
-
-            if state == 'play1':
-                state = 'play2'
-            else: state = 'play1'
+            moved = True
 
         elif x > 2*width/3 and (y > 2*height/3 and y < height) and board[2][2] == '0':
             board[2][2] = player
             scr.blit(img, (2*width/3 + sides/2, 2*height/3 + sides/2))
+            moved = True
+
+        if moved == True:
             pg.display.update()
 
             if state == 'play1':
                 state = 'play2'
-            else: state = 'play1'
+            else: 
+                state = 'play1'
 
 #Initialization
 try:
@@ -311,7 +302,7 @@ while run:
     draw_status()
     if state != "again?":
         check_win()
-
+        
         if state == 'play1':
             player_move('x')
         elif state == 'play2':
