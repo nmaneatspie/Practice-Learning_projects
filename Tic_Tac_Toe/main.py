@@ -14,8 +14,6 @@ from inspect import getframeinfo, currentframe
 
 err_line = getframeinfo(currentframe()).lineno
 
-debug = True  #For visual studio testing
-
 #Game window variables
 width = 600 #if changed, need to change obj_width
 height = 600 #if changed, need to change obj_height
@@ -41,15 +39,8 @@ run = True
 #File writing function
 def write_file(filename, err_num):
     try:
-        if debug:
-            from os.path import dirname, join
-            current_dir = dirname(__file__)
-            file_path = join(current_dir, "Error_log.txt")
-            file = open(file_path, 'a')
-            return file
-        else:
-            file = open("Error_log.txt", 'a')
-            return file
+        file = open("Error_log.txt", 'a')
+        return file
     except:
         error_log(err_num, filename)
     sys.exit([2])
@@ -246,17 +237,9 @@ except:
     error_log(2, err_line)
 
 cover_imagefile = "cover.png"
-bg_imagefile = "bg_image.png"
+bg_imagefile = "bg_image.ng"
 x_imagefile = "x_image.png"
 o_imagefile = "o_image.png"
-
-if debug:
-    from os.path import dirname, join
-    current_dir = dirname(__file__)
-    cover_imagefile = join(current_dir, cover_imagefile)
-    bg_imagefile = join(current_dir, bg_imagefile)
-    x_imagefile = join(current_dir, x_imagefile)
-    o_imagefile = join(current_dir, o_imagefile)
 
 try:
     err_line = getframeinfo(currentframe()).lineno
