@@ -27,7 +27,7 @@ status_height = 100
 
 fps = 10
 
-board = [[0]*3, [0]*3, [0]*3] #setting up 3x3 board
+board = [['0']*3, ['0']*3, ['0']*3] #setting up 3x3 board
 
 #other variables
 char = 'x' #store 'x' or 'o' as char value.
@@ -76,6 +76,9 @@ def error_log(err_num, err_line = getframeinfo(currentframe()).lineno, filename 
         sys.exit([1])
 
 def init_window():
+
+    global state
+
     try:
         err_line = getframeinfo(currentframe()).lineno
         scr.blit(cover_img, (0,0))
@@ -113,7 +116,7 @@ def draw_status():
         err_line = getframeinfo(currentframe()).lineno
         font = pg.font.SysFont('Arial',30)
         text = font.render(msg, text_width, text_colour)
-        scr.fill(status_colour, (0, width, height+status_height, status_height))
+        #scr.fill(status_colour, (0, width, height+status_height, status_height))
         text_rect = text.get_rect(center =(width/2, (height+status_height) - (status_height/2)))
         scr.blit(text, text_rect)
         pg.display.update()
@@ -124,22 +127,70 @@ def check_win():
     global board, state
 
     #check for winning diagonals then columsn then rows
-    if (board[0][0] == board[1][1] == board[2][2]) and board[1][1] != 0:
+    if (board[0][0] == board[1][1] == board[2][2]) and board[1][1] !='0':
         state = "win"
         winner = board[1][1]
         #Do stuff to show which one's are winning combination
-    elif (board[0][2] == board[1][1] == board[2][0]) and board[1][1] != 0:
+    elif (board[0][2] == board[1][1] == board[2][0]) and board[1][1] != '0':
         state = "win"
         winner = board[1][1]
         #Do stuff to show which one's are winning combination
+
+def draw_moves():
+    global board
+
+    for i in range(0,2):
+        for j in range(0,2):
+            if board[i][j] == 'x':
+                print('stub')
+                #draw x
+            elif board[i][j] == 'o':
+                print('stub')
+                #draw o
 
 def player_move(): #To Do
     global board, state
 
-    stub = True
-
-    if stub != True:
-        state = 'play2'
+    if pg.mouse.get_pressed()[0]:
+        x, y = pg.mouse.get_pos()
+        
+        #testing change the board assignment later
+        if x < width/3 and y < height/3 and board[0][0] == '0':
+            board[0][0] = 'x'
+            print('Board[0][0] Clicked')
+            state = 'play2'
+        elif (x > width/3 and x < 2*width/3) and y < height/3 and board[0][1] == '0':
+            board[0][1] = 'x'
+            print('Board[0][1] Clicked')
+            state = 'play2'
+        elif x > 2*width/3 and y < height/3 and board[0][2] == '0':
+            board[0][2] = 'x'
+            print('Board[0][2] Clicked')
+            state = 'play2'
+        elif x < width/3 and (y > height/3 and y < 2*height/3) and board[1][0] == '0':
+            board[1][0] = 'x'
+            print('Board[1][0] Clicked')
+            state = 'play2'
+        elif(x > width/3 and x < 2*width/3) and (y > height/3 and y < 2*height/3) and board[1][1] == '0':
+            board[1][1] = 'x'
+            print('Board[1][1] Clicked')
+            state = 'play2'
+        elif x > 2*width/3 and (y > height/3 and y < 2*height/3) and board[1][2] == '0':
+            board[1][2] = 'x'
+            print('Board[1][2] Clicked')
+            state = 'play2'
+        elif x < width/3 and y > 2*height/3 and board[2][0] == '0':
+            board[2][0] = 'x'
+            print('Board[2][0] Clicked')
+            state = 'play2'
+        elif(x > width/3 and x < 2*width/3) and y > 2*height/3 and board[2][1] == '0':
+            board[2][1] = 'x'
+            print('Board[2][1] Clicked')
+            state = 'play2'
+        elif x > 2*width/3 and y > 2*height/3 and board[2][2] == '0':
+            board[2][2] = 'x'
+            print('Board[2][2] Clicked')
+            state = 'play2'
 
 #Initialization
 try:
@@ -207,4 +258,7 @@ while run:
     check_win()
 
     if state == 'play1':
-        player_mov()
+        player_move()
+    elif state == 'play2':
+        #stub
+        state = 'play1'
