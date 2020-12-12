@@ -35,6 +35,7 @@ board = [['0']*3, ['0']*3, ['0']*3] #setting up 3x3 board
 #other variables
 state = "Setup" #current game state. States are: setup, play1, play2, draw, win, again?
 winner = None
+run = True
 
 #Functions
 #File writing function
