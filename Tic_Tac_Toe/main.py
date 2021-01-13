@@ -1,3 +1,4 @@
+
 """
 Norman Thien
 Created 25/10/2020
@@ -8,11 +9,12 @@ Shouldn't need much explanation. Two modes: singleplayer
 and two-player (2 Humans) [To be done later]
 
 This code will not be following PEP8 style.
+
+Python 3.8.3 and pygame 2.0.0 used
 """
 #Global pylint disables for this file
 # pylint: disable = redefined-outer-name, global-statement, invalid-name
 # pylint: disable = missing-function-docstring
-
 
 # Libraries
 import sys
@@ -20,7 +22,8 @@ import datetime
 import time
 import inspect # pylint: disable = unused-import
 from inspect import getframeinfo, currentframe
-import pygame as pg
+import pygame as pg #Need pygame 1.9.2 or later with 'freetype' support
+from pygame.freetype import *
 
 err_line = getframeinfo(currentframe()).lineno
 
@@ -31,12 +34,10 @@ status_height = 100
 
 #Image variables
 sides = 20 #remove some amount from edge
-#obj_height = height/3 - sides #crashes for some reason, need to check again!!!!!!!!!!!!!!
-#obj_width  = width/3 - sides
-obj_height = 200 - sides
-obj_width = 200 - sides
+obj_height = int(height/3 - sides) #crashes for some reason, need to check again!!!!!!!!!!!!!!
+obj_width  = int(width/3 - sides)
 
-fps = 1
+fps = 1 #>= 1 doesn't really matter for this specific game
 
 board = [['0']*3, ['0']*3, ['0']*3] #setting up 3x3 board
 
@@ -95,49 +96,48 @@ def init_window():
         scr.blit(bg_img, (0, 0))
         pg.display.update()
         state = "play1"
-        draw_status()
+        draw_status(state)
     except: # pylint: disable = bare-except
         error_log(2, err_line)
 
-def draw_status():
+def draw_status(state):
 
-    text_width = 1
-    text_colour = (255, 255, 255)
+    global scr
 
     msg = ""
 
     if state == "win":
-        if winner == 'x':
-            winning_player = 1
-        else:
-            winning_player = 0
-        msg = "player {} won".format(winning_player)
+        msg = "{} won".format(winner)
     elif state == "draw":
         msg = "A draw"
     elif state == "play1":
-        msg = "player 1 turn"
+        msg = "x's turn"
     elif state == "play2":
-        msg = "player 2 turn"
+        msg = "o's turn"
 
     try:
         err_line = getframeinfo(currentframe()).lineno
-        font = pg.font.SysFont('Arial', 30)
-        text = font.render(msg, text_width, text_colour)
-        text_rect = text.get_rect(center = (width/2, (height+status_height) - (status_height/2))) # pylint: disable = bad-whitespace
-        scr.blit(text, text_rect)
+
+        font = pg.freetype.SysFont('Arial', 30)
+        text_rect = (width/3, (height+status_height) - (status_height/2))
+        surf = pg.Surface((width, status_height))
+        surf.fill((255,255,255))  # white
+        scr.blit(surf, (0, height))
+        pg.display.update()
+        font.render_to(scr, text_rect, msg)
         pg.display.update()
     except: # pylint: disable = bare-except
+        print(pg.freetype.get_error())
         error_log(2, err_line)
 
 def check_win():
 
     global board, state, winner
 
-    #check for winning diagonals then columsn then rows
+    #check for winning diagonals then columns then rows
     if (board[0][0] == board[1][1] == board[2][2]) and board[1][1] != '0':
         winner = board[1][1]
         state = "win"
-        #Do stuff to show which one's are winning combination
     elif (board[0][2] == board[1][1] == board[2][0]) and board[1][1] != '0':
         winner = board[1][1]
         state = "win"
@@ -149,9 +149,11 @@ def check_win():
             if (board[i][0] == board[i][1] == board[i][2]) and board[i][0] != '0': #row same
                 winner = board[i][0]
                 state = "win"
+                draw = False
             elif (board[0][i] == board[1][i] == board[2][i]) and board[0][i] != '0': #column same
                 winner = board[0][i]
                 state = "win"
+                draw = False
 
             if state != "win" and draw is True:
                 for j in range(0, 3):
@@ -161,12 +163,12 @@ def check_win():
 
         if draw is True:
             state = "draw"
-            print(state)
+            draw_status(state)
 
      #stub
     if state == "win":
         if winner is not None:
-            print(winner)
+            draw_status(state)
             state = "again?" #To do: ask if player wants to play again
         else:
             print('error with winner')
@@ -266,16 +268,16 @@ def player_move(player): #To Do for 'o' player, need to change the image input b
                 state = 'play2'
             else:
                 state = 'play1'
+            draw_status(state)
 
 #Initialization
 try:
     err_line = getframeinfo(currentframe()).lineno
 
     #individual pygame modules init
-    #pg.init()
     pg.display.init()
     err_line = getframeinfo(currentframe()).lineno
-    pg.font.init()
+    pg.freetype.init()
 
     err_line = getframeinfo(currentframe()).lineno
     CLK = pg.time.Clock()
@@ -326,7 +328,6 @@ init_window()
 try:
     while run:
         pg.event.pump()
-        draw_status()
         if state != "again?":
             check_win()
             if state == 'play1':
