@@ -139,6 +139,7 @@ def draw_status(state):
                 msg_bg_height, msg_bg_x, msg_bg_y, screen)
     except:
         error_log(2, err_line)
+        
 def check_win():
 
     global board, state, winner
@@ -159,11 +160,12 @@ def check_win():
                 winner = board[i][0]
                 state = "win"
                 draw = False
+                break
             elif (board[0][i] == board[1][i] == board[2][i]) and board[0][i] != '0': #column same
                 winner = board[0][i]
                 state = "win"
                 draw = False
-
+                break
             if state != "win" and draw is True:
                 for j in range(0, 3):
                     if board[i][j] == '0':
@@ -172,18 +174,19 @@ def check_win():
 
         if draw is True:
             state = "draw"
-            draw_status(state)
 
      #stub
     if state == "win":
         if winner is not None:
             draw_status(state)
+            time.sleep(1.5)
             state = "again?" #To do: ask if player wants to play again
         else:
             print('error with winner')
             state = "again?"
     elif state == "draw":
-        print('Draw')
+        draw_status(state)
+        time.sleep(1.5)
         state = "again?"
 
 def draw_text(
@@ -218,7 +221,7 @@ def draw_text(
 def play_again():
 
     draw_text("STUB!!!", width/2, height/2, width, height+status_height, 0, 0, scr)   
-    time.sleep(2)
+    time.sleep(0.5)
 
 def player_move(player): #To Do for 'o' player, need to change the image input based on player
 
@@ -330,10 +333,10 @@ try:
 except: # pylint: disable = bare-except
     error_log(2, err_line)
 
-cover_imagefile = "cover.png"
-bg_imagefile = "bg_image.png"
-x_imagefile = "x_image.png"
-o_imagefile = "o_image.png"
+cover_imagefile = "images/cover.png"
+bg_imagefile = "images/bg_image.png"
+x_imagefile = "images/x_image.png"
+o_imagefile = "images/o_image.png"
 
 try:
     err_line = getframeinfo(currentframe()).lineno
@@ -370,17 +373,18 @@ init_window()
 
 try:
     while run:
-        pg.event.pump()
-        if state != "again?":
-            check_win()
-            if state == 'play1':
-                player_move('x')
-            elif state == 'play2':
-                player_move('o')
-        else: #STUB
-            play_again()
-            run = False
-    pg.quit()
+        if pg.event.get(pg.QUIT, True): #event.pump set to true 
+            sys.exit([0])
+        else:
+            if state != "again?":
+                check_win()
+                if state == 'play1':
+                    player_move('x')
+                elif state == 'play2':
+                    player_move('o')
+            else: #STUB
+                play_again()
+                run = False
     sys.exit([0])
 except SystemExit:
     pg.quit()
