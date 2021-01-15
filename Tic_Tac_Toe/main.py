@@ -110,37 +110,32 @@ def game_display(): #STUB
     draw_status(state)
 
 def draw_status(state):
-
-    msg = ""
-
-    if state == "win":
-        msg = "{} won".format(winner)
-    elif state == "draw":
-        msg = "A draw"
-    elif state == "play1":
-        msg = "x's turn"
-    elif state == "play2":
-        msg = "o's turn"
-
     try:
         err_line = getframeinfo(currentframe()).lineno
+        msg = ""
 
-        msg_x = width/3
-        msg_y = (height+status_height) - (status_height/2)
-        msg_bg_width = width
-        msg_bg_height = status_height
-        msg_bg_x = 0
-        msg_bg_y = height
-        screen = scr
+        if state == "win":
+            msg = "{} won".format(winner)
+        elif state == "draw":
+            msg = "A draw"
+        elif state == "play1":
+            msg = "x's turn"
+        elif state == "play2":
+            msg = "o's turn"
 
-        draw_text(msg, msg_x, msg_y, msg_bg_width,
-                 msg_bg_height, msg_bg_x, msg_bg_y, screen)
+            msg_x = width/3
+            msg_y = (height+status_height) - (status_height/2)
+            msg_bg_width = width
+            msg_bg_height = status_height
+            msg_bg_x = 0
+            msg_bg_y = height
+            screen = scr
 
     except: # pylint: disable = bare-except
-        if pg.freetype.get_error() is not None:
             error_log(2, err_line)
-        else:
-            error_log(3, err_line)
+
+    draw_text(msg, msg_x, msg_y, msg_bg_width,
+              msg_bg_height, msg_bg_x, msg_bg_y, screen)
 
 def check_win():
 
@@ -202,6 +197,7 @@ def draw_text(
     ):
     try:
         err_line = getframeinfo(currentframe()).lineno
+
         font = pg.freetype.SysFont('Arial', 30)
         text_rect = (text_x, text_y)
         bg_surface = pg.Surface((bg_width, bg_height))
@@ -210,8 +206,12 @@ def draw_text(
         pg.display.update()
         font.render_to(screen, text_rect, text)
         pg.display.update()
+
     except: # pylint: disable = bare-except
-        error_log(2, err_line)
+        if pg.freetype.get_error() is not None:
+            error_log(2, err_line)
+        else:
+            error_log(3, err_line)
 
 def play_again():
 
