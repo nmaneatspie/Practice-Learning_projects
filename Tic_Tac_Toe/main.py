@@ -84,7 +84,6 @@ def error_log(
 
 def init_window():
 
-    global state
 
     try:
         err_line = getframeinfo(currentframe()).lineno
@@ -93,16 +92,22 @@ def init_window():
         #Update window
         pg.display.update()
         time.sleep(0.5)
-        scr.blit(bg_img, (0, 0))
-        pg.display.update()
-        state = "play1"
-        draw_status(state)
+
+        game_display() #STUB, later will go to main screen to choose play mode
+
     except: # pylint: disable = bare-except
         error_log(2, err_line)
 
-def draw_status(state):
+def game_display(): #STUB
+    
+    global state
 
-    global scr
+    scr.blit(bg_img, (0, 0))
+    pg.display.update()
+    state = "play1"
+    draw_status(state)
+
+def draw_status(state):
 
     msg = ""
 
@@ -118,14 +123,17 @@ def draw_status(state):
     try:
         err_line = getframeinfo(currentframe()).lineno
 
-        font = pg.freetype.SysFont('Arial', 30)
-        text_rect = (width/3, (height+status_height) - (status_height/2))
-        surf = pg.Surface((width, status_height))
-        surf.fill((255,255,255))  # white
-        scr.blit(surf, (0, height))
-        pg.display.update()
-        font.render_to(scr, text_rect, msg)
-        pg.display.update()
+        msg_x = width/3
+        msg_y = (height+status_height) - (status_height/2)
+        msg_bg_width = width
+        msg_bg_height = status_height
+        msg_bg_x = 0
+        msg_bg_y = height
+        screen = scr
+
+        draw_text(msg, msg_x, msg_y, msg_bg_width,
+                 msg_bg_height, msg_bg_x, msg_bg_y, screen)
+
     except: # pylint: disable = bare-except
         print(pg.freetype.get_error())
         error_log(2, err_line)
@@ -176,6 +184,32 @@ def check_win():
     elif state == "draw":
         print('Draw')
         state = "again?"
+
+def draw_text(
+        text, 
+        text_x, 
+        text_y, 
+        bg_width, 
+        bg_height, 
+        bg_pos_x,
+        bg_pos_y,
+        screen,
+        fill_colour = (255,255,255)
+    ):
+    
+    font = pg.freetype.SysFont('Arial', 30)
+    text_rect = (text_x, text_y)
+    bg_surface = pg.Surface((bg_width, bg_height))
+    bg_surface.fill(fill_colour)  # white
+    screen.blit(bg_surface, (bg_pos_x, bg_pos_y))
+    pg.display.update()
+    font.render_to(screen, text_rect, text)
+    pg.display.update()
+
+def play_again():
+
+    draw_text("STUB!!!", width/2, height/2, width, height+status_height, 0, 0, scr)   
+    time.sleep(2)
 
 def player_move(player): #To Do for 'o' player, need to change the image input based on player
 
@@ -334,8 +368,9 @@ try:
                 player_move('x')
             elif state == 'play2':
                 player_move('o')
-
-    time.sleep(2)
+        else: #STUB
+            play_again()
+            run = False
     pg.quit()
     sys.exit([0])
 except SystemExit:
