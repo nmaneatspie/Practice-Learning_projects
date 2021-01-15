@@ -94,7 +94,8 @@ def init_window():
         #Update window
         pg.display.update()
         time.sleep(0.5)
-
+    
+        err_line = getframeinfo(currentframe()).lineno
         game_display() #STUB, later will go to main screen to choose play mode
 
     except: # pylint: disable = bare-except
@@ -103,11 +104,10 @@ def init_window():
 def game_display(): #STUB
     
     global state
-
+    
     scr.blit(bg_img, (0, 0))
     pg.display.update()
     state = "play1"
-    draw_status(state)
 
 def draw_status(state):
     try:
@@ -123,20 +123,22 @@ def draw_status(state):
         elif state == "play2":
             msg = "o's turn"
 
-            msg_x = width/3
-            msg_y = (height+status_height) - (status_height/2)
-            msg_bg_width = width
-            msg_bg_height = status_height
-            msg_bg_x = 0
-            msg_bg_y = height
-            screen = scr
+        msg_x = width/3
+        msg_y = (height+status_height) - (status_height/2)
+        msg_bg_width = width
+        msg_bg_height = status_height
+        msg_bg_x = 0
+        msg_bg_y = height
+        screen = scr
 
     except: # pylint: disable = bare-except
             error_log(2, err_line)
-
-    draw_text(msg, msg_x, msg_y, msg_bg_width,
-              msg_bg_height, msg_bg_x, msg_bg_y, screen)
-
+    try:
+        err_line = getframeinfo(currentframe()).lineno
+        draw_text(msg, msg_x, msg_y, msg_bg_width,
+                msg_bg_height, msg_bg_x, msg_bg_y, screen)
+    except:
+        error_log(2, err_line)
 def check_win():
 
     global board, state, winner

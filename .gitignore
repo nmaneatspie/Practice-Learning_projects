@@ -348,3 +348,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/Tic_Tac_Toe/dist
+/Tic_Tac_Toe/setup.py
