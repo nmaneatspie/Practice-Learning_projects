@@ -28,8 +28,8 @@ from pygame.freetype import *
 err_line = getframeinfo(currentframe()).lineno
 
 #Game window variables
-width = 600 #if changed, need to change obj_width
-height = 600 #if changed, need to change obj_height
+width = 600
+height = 600
 status_height = 100
 
 #Image variables
@@ -61,7 +61,8 @@ def write_file(filename, err_num):
 def error_log(
         err_num,
         err_line = getframeinfo(currentframe()).lineno, #pylint: disable = bad-whitespace
-        filename = "No file provided" #pylint: disable = bad-whitespace
+        filename = "No file provided", #pylint: disable = bad-whitespace
+        freetype_err = None
     ):
 
     if err_num == -1: #Prevent looping when writing error to log
@@ -69,7 +70,8 @@ def error_log(
     else:
         err_msg = {
             1: "Could not load image {}".format(filename),
-            2: ""
+            2: "",
+            3: "freetype error: {}".format(freetype_err)
         }
         try:
             file = write_file(filename, -1)
@@ -135,8 +137,10 @@ def draw_status(state):
                  msg_bg_height, msg_bg_x, msg_bg_y, screen)
 
     except: # pylint: disable = bare-except
-        print(pg.freetype.get_error())
-        error_log(2, err_line)
+        if pg.freetype.get_error() is not None:
+            error_log(2, err_line)
+        else:
+            error_log(3, err_line)
 
 def check_win():
 
@@ -196,15 +200,18 @@ def draw_text(
         screen,
         fill_colour = (255,255,255)
     ):
-    
-    font = pg.freetype.SysFont('Arial', 30)
-    text_rect = (text_x, text_y)
-    bg_surface = pg.Surface((bg_width, bg_height))
-    bg_surface.fill(fill_colour)  # white
-    screen.blit(bg_surface, (bg_pos_x, bg_pos_y))
-    pg.display.update()
-    font.render_to(screen, text_rect, text)
-    pg.display.update()
+    try:
+        err_line = getframeinfo(currentframe()).lineno
+        font = pg.freetype.SysFont('Arial', 30)
+        text_rect = (text_x, text_y)
+        bg_surface = pg.Surface((bg_width, bg_height))
+        bg_surface.fill(fill_colour)  # white
+        screen.blit(bg_surface, (bg_pos_x, bg_pos_y))
+        pg.display.update()
+        font.render_to(screen, text_rect, text)
+        pg.display.update()
+    except: # pylint: disable = bare-except
+        error_log(2, err_line)
 
 def play_again():
 
