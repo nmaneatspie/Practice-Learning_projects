@@ -37,8 +37,6 @@ sides = 20 #remove some amount from edge
 obj_height = int(height/3 - sides) #crashes for some reason, need to check again!!!!!!!!!!!!!!
 obj_width  = int(width/3 - sides)
 
-fps = 1 #>= 1 doesn't really matter for this specific game
-
 board = [['0']*3, ['0']*3, ['0']*3] #setting up 3x3 board
 
 #other variables
@@ -92,7 +90,7 @@ def init_window():
         scr.blit(cover_img, (0, 0))
 
         #Update window
-        pg.display.update()
+        pg.display.flip()
         time.sleep(0.5)
     
         err_line = getframeinfo(currentframe()).lineno
@@ -106,7 +104,7 @@ def game_display(): #STUB
     global state
     
     scr.blit(bg_img, (0, 0))
-    pg.display.update()
+    pg.display.flip()
     state = "play1"
 
 def draw_status(state):
@@ -208,9 +206,9 @@ def draw_text(
         bg_surface = pg.Surface((bg_width, bg_height))
         bg_surface.fill(fill_colour)  # white
         screen.blit(bg_surface, (bg_pos_x, bg_pos_y))
-        pg.display.update()
+        pg.display.flip()
         font.render_to(screen, text_rect, text)
-        pg.display.update()
+        pg.display.flip()
 
     except: # pylint: disable = bare-except
         if pg.freetype.get_error() is not None:
@@ -227,7 +225,7 @@ def player_move(player): #To Do for 'o' player, need to change the image input b
 
     global board, state, scr, width, height, x_img, o_img, sides
 
-    if pg.mouse.get_pressed()[0]: # and player == 'x':
+    if pg.event.get(pg.MOUSEBUTTONDOWN) and pg.mouse.get_pressed()[0]: # and player == 'x':
         x, y = pg.mouse.get_pos()
 
         if player == 'x':
@@ -308,7 +306,7 @@ def player_move(player): #To Do for 'o' player, need to change the image input b
             moved = True
 
         if moved is True:
-            pg.display.update()
+            pg.display.flip()
 
             if state == 'play1':
                 state = 'play2'
@@ -325,10 +323,9 @@ try:
     err_line = getframeinfo(currentframe()).lineno
     pg.freetype.init()
 
-    err_line = getframeinfo(currentframe()).lineno
-    CLK = pg.time.Clock()
+    #err_line = getframeinfo(currentframe()).lineno
 
-    scr = pg.display.set_mode((width, height + status_height), 0, fps)
+    scr = pg.display.set_mode((width, height + status_height))
     pg.display.set_caption("Tic Tac Toe") #Window name
 except: # pylint: disable = bare-except
     error_log(2, err_line)
