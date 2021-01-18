@@ -23,7 +23,7 @@ import time
 import inspect # pylint: disable = unused-import
 from inspect import getframeinfo, currentframe
 import pygame as pg #Need pygame 1.9.2 or later with 'freetype' support
-from pygame.freetype import *
+#from pygame.freetype import *
 
 err_line = getframeinfo(currentframe()).lineno
 
@@ -87,6 +87,7 @@ def init_window():
 
     try:
         err_line = getframeinfo(currentframe()).lineno
+        draw_blank_screen()
         scr.blit(cover_img, (0, 0))
 
         #Update window
@@ -103,11 +104,15 @@ def game_display(): #STUB
     
     global state
     
+    draw_blank_screen()
     scr.blit(bg_img, (0, 0))
     pg.display.flip()
     state = "play1"
 
 def draw_status(state):
+
+    global height, width, scr, status_height
+
     try:
         err_line = getframeinfo(currentframe()).lineno
         msg = ""
@@ -121,20 +126,15 @@ def draw_status(state):
         elif state == "play2":
             msg = "o's turn"
 
-        msg_x = width/3
+        msg_x = width/2
         msg_y = (height+status_height) - (status_height/2)
-        msg_bg_width = width
-        msg_bg_height = status_height
-        msg_bg_x = 0
-        msg_bg_y = height
-        screen = scr
+        padding = 20
 
     except: # pylint: disable = bare-except
             error_log(2, err_line)
     try:
         err_line = getframeinfo(currentframe()).lineno
-        draw_text(msg, msg_x, msg_y, msg_bg_width,
-                msg_bg_height, msg_bg_x, msg_bg_y, screen)
+        draw_text(msg, msg_x, msg_y, scr, padding)
     except:
         error_log(2, err_line)
         
@@ -188,38 +188,74 @@ def check_win():
         state = "again?"
 
 def draw_text(
-        text, 
-        text_x, 
-        text_y, 
-        bg_width, 
-        bg_height, 
-        bg_pos_x,
-        bg_pos_y,
+        text,
+        bg_x,
+        bg_y,
         screen,
-        fill_colour = (255,255,255)
+        padding = 0,
+        text_colour = (0,0,0)
     ):
     try:
         err_line = getframeinfo(currentframe()).lineno
 
-        font = pg.freetype.SysFont('Arial', 30)
-        text_rect = (text_x, text_y)
-        bg_surface = pg.Surface((bg_width, bg_height))
-        bg_surface.fill(fill_colour)  # white
-        screen.blit(bg_surface, (bg_pos_x, bg_pos_y))
-        pg.display.flip()
-        font.render_to(screen, text_rect, text)
-        pg.display.flip()
+        text_font = pg.font.SysFont('Arial', 30)
+        text_surface = text_font.render(text, False, text_colour)
+        text_rect = text_surface.get_rect(center=(bg_x, bg_y))
+
+        blank_width = text_rect.width + padding
+        blank_height = text_rect.height + padding
+        draw_rect(screen, blank_width, blank_height, bg_x, bg_y)
+        screen.blit(text_surface, text_rect)
+        pg.display.update(text_rect)
 
     except: # pylint: disable = bare-except
-        if pg.freetype.get_error() is not None:
-            error_log(2, err_line)
+        error_log(2, err_line)
+
+def draw_rect(screen, width, height, x, y, mode="center", inside_box = False, thickness = 5, fill_colour=(255,255,255), inside_colour=(255,255,255)):
+    """
+    topleft or centre mode only
+    if inside_box is False then thickness doesn't affect
+    """
+    width = int(width)
+    height = int(height)
+    
+    try:
+        rect_surf = pg.Surface((width, height))
+        rect_surf.fill(fill_colour)
+        if mode == "center":
+            rect = rect_surf.get_rect(center=(x,y))
         else:
-            error_log(3, err_line)
+            rect = rect_surf.get_rect(topleft=(x,y))
+        screen.blit(rect_surf, rect)
+        pg.display.update(rect)
+
+        if inside_box is True:
+            inside_rect_w = int(rect.width - 2*thickness)
+            inside_rect_h = int(rect.height - 2*thickness)
+            inside_x = int(rect.left + thickness)
+            inside_y = int(rect.top + thickness)
+
+            inside_rect = pg.Rect((inside_x, inside_y),(inside_rect_w, inside_rect_h))
+            inside_surf = pg.Surface((inside_rect_w, inside_rect_h))
+            inside_surf.fill(inside_colour)
+            screen.blit(inside_surf, inside_rect)
+            pg.display.update(inside_rect)
+
+    except: # pylint: disable = bare-except
+        error_log(2, err_line)
+
+def draw_blank_screen():
+
+    draw_rect(scr, width, height+status_height, 0, 0, (0,0,0))
+    pg.display.flip()
 
 def play_again():
 
-    draw_text("STUB!!!", width/2, height/2, width, height+status_height, 0, 0, scr)   
-    time.sleep(0.5)
+    global scr, width, height, status_height
+
+    draw_blank_screen()
+    draw_rect(scr, width/3, status_height, width/2, (height+status_height)/2, "center", True, 5, (0,0,0), (200, 200, 200))
+    time.sleep(1)
 
 def player_move(player): #To Do for 'o' player, need to change the image input based on player
 
@@ -321,9 +357,7 @@ try:
     #individual pygame modules init
     pg.display.init()
     err_line = getframeinfo(currentframe()).lineno
-    pg.freetype.init()
-
-    #err_line = getframeinfo(currentframe()).lineno
+    pg.font.init()
 
     scr = pg.display.set_mode((width, height + status_height))
     pg.display.set_caption("Tic Tac Toe") #Window name
@@ -370,7 +404,7 @@ init_window()
 
 try:
     while run:
-        if pg.event.get(pg.QUIT, True): #event.pump set to true 
+        if pg.event.get(pg.QUIT, True):
             sys.exit([0])
         else:
             if state != "again?":
@@ -379,7 +413,7 @@ try:
                     player_move('x')
                 elif state == 'play2':
                     player_move('o')
-            else: #STUB
+            else:
                 play_again()
                 run = False
     sys.exit([0])
