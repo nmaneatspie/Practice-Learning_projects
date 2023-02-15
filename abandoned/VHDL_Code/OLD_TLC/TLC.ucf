@@ -1,0 +1,44 @@
+NET sensors(3)  LOC = N7;
+NET sensors(2)  LOC = E7;
+NET sensors(1)  LOC = A10;
+NET sensors(0)  LOC = G4;
+
+NET AL(2)       LOC = M7;
+NET AL(1)       LOC = M10;
+NET AL(0)       LOC = F3;
+
+NET AT(2)       LOC = C2;
+NET AT(1)       LOC = C1;
+NET AT(0)       LOC = B1;
+
+NET AR(2)       LOC = M3;
+NET AR(1)       LOC = R5;
+NET AR(0)       LOC = L4;
+
+NET BR(2)       LOC = C8;
+NET BR(1)       LOC = D7;
+NET BR(0)       LOC = C7;
+
+NET BT(2)       LOC = D10;
+NET BT(1)       LOC = C9;
+NET BT(0)       LOC = D8;
+
+NET BL(2)       LOC = A4;
+NET BL(1)       LOC = B4;
+NET BL(0)       LOC = A3;
+
+NET CT(2)       LOC = B8;
+NET CT(1)       LOC = A7;
+NET CT(0)       LOC = B7;
+
+NET CR(2)       LOC = B6;
+NET CR(1)       LOC = A5;
+NET CR(0)       LOC = B5;
+
+NET DT(2)       LOC = R6;
+NET DT(1)       LOC = M4;
+NET DT(0)       LOC = T5;
+
+NET DR(2)       LOC = H4;
+NET DR(1)       LOC = H3;
+NET DR(0)       LOC = J3;
