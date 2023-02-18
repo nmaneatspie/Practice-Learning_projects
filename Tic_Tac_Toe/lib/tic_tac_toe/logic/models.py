@@ -1,5 +1,10 @@
-# This file hosts the definitions for the tic-tac-toe domain model objects.
+"""
+    Created By: Norman Thien
+    Creation Date: 15 Feb 2023
+    Last Modified: 18 Feb 2023
 
+    This file hosts the definitions for the tic-tac-toe domain model objects.
+"""
 #imports
 
 import enum

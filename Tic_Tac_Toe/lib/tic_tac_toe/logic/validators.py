@@ -1,4 +1,11 @@
-#File to store validation methods. Keep validation separate from other files whenever possible
+"""
+    Created By: Norman Thien
+    Creation Date: 15 Feb 2023
+    Last Modified: 18 Feb 2023
+
+    File to store validation methods. Keep validation separate from other files whenever possible
+"""
+
 
 #imports
 from __future__ import annotations
@@ -7,6 +14,7 @@ import re
 from tic_tac_toe.logic.exceptions import InvalidGameState
 
 if TYPE_CHECKING:
+    from tic_tac_toe.game.players import Player
     from tic_tac_toe.logic.models import Grid, GameState
 
 
@@ -59,3 +67,7 @@ def validate_winner(
         else:
             if grid.o_count != grid.x_count:
                 raise InvalidGameState("Wrong number of Os")
+            
+def validate_players(player1: Player, player2: Player) -> None:
+    if player1.mark is player2.mark:
+        raise ValueError("Players must use different marks")
